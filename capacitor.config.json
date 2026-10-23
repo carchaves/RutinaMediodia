@@ -1,0 +1,10 @@
+{
+  "appId": "com.raflos.rutinamediodia",
+  "appName": "Rutina del Mediodía",
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false
+    }
+  }
+}

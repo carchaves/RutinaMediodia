@@ -1,0 +1,12 @@
+{
+  "name": "Rutina del Mediodía",
+  "short_name": "Mediodía",
+  "description": "Checklist del mediodía: almuerzo, baño, clase o estudio según el día.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F2F7EC",
+  "theme_color": "#F2F7EC",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
