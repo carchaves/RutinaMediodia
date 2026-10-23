@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen,
+  Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
   ChevronLeft, ChevronRight, Flame, RotateCcw,
 } from "lucide-react";
 
@@ -22,6 +22,7 @@ const C = {
 //   Sáb/Dom: almuerzo, baño
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1" };
+const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F" };
 const CLASE = { key: "clase", label: "Clase", Icon: GraduationCap, color: "#7E9F3C" };
 const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, color: "#C9893C" };
 const PSICOLOGA = { key: "psicologa", label: "Psicóloga", Icon: Armchair, color: "#A78BE0" };
@@ -31,7 +32,7 @@ const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
   if (dow === 3) return [ALMUERZO, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
   if (dow === 0 || dow === 6) return [ALMUERZO, BANO]; // finde
-  return [ALMUERZO, BANO, CLASE]; // lun/mar/jue/vie
+  return [ALMUERZO, BANO, REPASO, CLASE]; // lun/mar/jue/vie
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
