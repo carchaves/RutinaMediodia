@@ -33,4 +33,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Poder abrir la app Aseo Speedrun / Ritual de Ducha -->
+    <queries>
+        <package android:name="com.ritualducha.app" />
+    </queries>
 </manifest>

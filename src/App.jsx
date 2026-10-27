@@ -3,6 +3,12 @@ import {
   Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
   ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X,
 } from "lucide-react";
+import { AppLauncher } from "@capacitor/app-launcher";
+
+// Al tocar "Baño" se abre la app Aseo Speedrun / Ritual de Ducha.
+const openApp = async (pkg) => {
+  try { await AppLauncher.openUrl({ url: pkg }); } catch (e) { /* no instalada */ }
+};
 
 // -- Paleta verde (hermana diurna de mañana/noche) ----------------
 const C = {
@@ -22,7 +28,7 @@ const C = {
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
-const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1" };
+const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app" };
 const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F" };
 const MOCHILA = { key: "mochila", label: "Preparar mochila", Icon: Backpack, color: "#B06E3C", modal: true };
 const CLASE = { key: "clase", label: "Clase", Icon: GraduationCap, color: "#7E9F3C" };
@@ -279,18 +285,20 @@ export default function App() {
       {/* hábitos */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
         {selHabits.map((habit) => {
-          const { key, label, Icon, color, modal } = habit;
+          const { key, label, Icon, color, modal, launch } = habit;
           const done = isDone(selected, habit);
-          const act = () => (modal ? setBagOpen(true) : toggle(key));
+          const act = () => (modal ? setBagOpen(true) : launch ? openApp(launch) : toggle(key));
           const sub = modal
             ? `${bagItems.filter((it) => data[selected] && data[selected][bagKeyFor(it.id)]).length}/${bagItems.length} ítems`
+            : launch
+            ? "Abrir Aseo Speedrun"
             : null;
           return (
             <div
               key={key}
               className="mr-tap mr-row"
-              role={modal ? "button" : "checkbox"}
-              aria-checked={modal ? undefined : done}
+              role={modal || launch ? "button" : "checkbox"}
+              aria-checked={modal || launch ? undefined : done}
               tabIndex={0}
               onClick={act}
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } }}
@@ -307,11 +315,19 @@ export default function App() {
                 <span style={{ color: C.ink, fontSize: 16, fontFamily: "system-ui", opacity: done ? 1 : 0.85 }}>{label}</span>
                 {sub && <span style={{ display: "block", color: C.muted, fontSize: 12, fontFamily: "system-ui", marginTop: 1 }}>{sub}</span>}
               </span>
-              <span style={{
+              <span
+                className={launch ? "mr-tap" : undefined}
+                role={launch ? "checkbox" : undefined}
+                aria-checked={launch ? done : undefined}
+                tabIndex={launch ? 0 : undefined}
+                aria-label={launch ? `Marcar ${label} como hecho` : undefined}
+                onClick={launch ? (e) => { e.stopPropagation(); toggle(key); } : undefined}
+                onKeyDown={launch ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); toggle(key); } } : undefined}
+                style={{
                 width: 24, height: 24, borderRadius: 999,
                 border: `2px solid ${done ? color : C.border}`,
                 background: done ? color : "transparent",
-                display: "grid", placeItems: "center", transition: "all .2s",
+                display: "grid", placeItems: "center", transition: "all .2s", flexShrink: 0,
               }}>
                 {done && (
                   <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.3 5 8.7l4.5-5" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
