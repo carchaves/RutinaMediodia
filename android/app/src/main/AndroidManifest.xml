@@ -38,5 +38,6 @@
     <queries>
         <package android:name="com.ritualducha.app" />
         <package android:name="cc.forestapp" />
+        <package android:name="com.duolingo" />
     </queries>
 </manifest>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
-  ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X,
+  ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X, Languages,
 } from "lucide-react";
 import { AppLauncher } from "@capacitor/app-launcher";
 
@@ -27,6 +27,7 @@ const C = {
 //   Mar/Jue/Vie: almuerzo, baño, repaso, preparar mochila, clase
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
+const DUOLINGO = { key: "duolingo", label: "Duolingo", Icon: Languages, color: "#58CC02", launch: "com.duolingo", launchLabel: "Abrir Duolingo" };
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
 const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F", launch: "cc.forestapp", launchLabel: "Abrir Forest" };
@@ -38,10 +39,10 @@ const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA
 
 const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
-  if (dow === 3) return [ALMUERZO, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [ALMUERZO, BANO]; // finde
-  if (dow === 2 || dow === 4 || dow === 5) return [ALMUERZO, BANO, REPASO, MOCHILA, CLASE]; // mar/jue/vie
-  return [ALMUERZO, BANO, REPASO, CLASE]; // lun
+  if (dow === 3) return [DUOLINGO, ALMUERZO, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [DUOLINGO, ALMUERZO, BANO]; // finde
+  if (dow === 2 || dow === 4 || dow === 5) return [DUOLINGO, ALMUERZO, BANO, REPASO, MOCHILA, CLASE]; // mar/jue/vie
+  return [DUOLINGO, ALMUERZO, BANO, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
