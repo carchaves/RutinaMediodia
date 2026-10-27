@@ -28,8 +28,8 @@ const C = {
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
-const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app" };
-const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F" };
+const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
+const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F", launch: "cc.forestapp", launchLabel: "Abrir Forest" };
 const MOCHILA = { key: "mochila", label: "Preparar mochila", Icon: Backpack, color: "#B06E3C", modal: true };
 const CLASE = { key: "clase", label: "Clase", Icon: GraduationCap, color: "#7E9F3C" };
 const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, color: "#C9893C" };
@@ -285,13 +285,13 @@ export default function App() {
       {/* hábitos */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
         {selHabits.map((habit) => {
-          const { key, label, Icon, color, modal, launch } = habit;
+          const { key, label, Icon, color, modal, launch, launchLabel } = habit;
           const done = isDone(selected, habit);
           const act = () => (modal ? setBagOpen(true) : launch ? openApp(launch) : toggle(key));
           const sub = modal
             ? `${bagItems.filter((it) => data[selected] && data[selected][bagKeyFor(it.id)]).length}/${bagItems.length} ítems`
             : launch
-            ? "Abrir Aseo Speedrun"
+            ? launchLabel
             : null;
           return (
             <div
