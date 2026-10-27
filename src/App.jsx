@@ -266,7 +266,7 @@ export default function App() {
       {/* encabezado */}
       <header style={{ position: "relative", zIndex: 1 }}>
         <div style={{ fontFamily: "'Iowan Old Style','Palatino',Georgia,serif", fontSize: 26, color: C.ink, letterSpacing: 0.3 }}>
-          Rutina del Mediodía
+          Rutina mediodia
         </div>
         <div style={{ color: C.muted, fontSize: 13, marginTop: 2, fontFamily: "system-ui" }}>
           {cap(selDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" }))}
