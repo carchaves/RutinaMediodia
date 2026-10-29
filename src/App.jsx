@@ -30,6 +30,7 @@ const C = {
 const DUOLINGO = { key: "duolingo", label: "Duolingo", Icon: Languages, color: "#58CC02", launch: "com.duolingo", launchLabel: "Abrir Duolingo" };
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
+const CAFE = { key: "cafe", label: "Café", Icon: Coffee, color: "#8B5E3C" };
 const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F", launch: "com.checklist.facu", launchLabel: "Abrir Checklist" };
 const MOCHILA = { key: "mochila", label: "Preparar mochila", Icon: Backpack, color: "#B06E3C", modal: true };
 const CLASE = { key: "clase", label: "Clase", Icon: GraduationCap, color: "#7E9F3C" };
@@ -39,10 +40,10 @@ const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA
 
 const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
-  if (dow === 3) return [DUOLINGO, ALMUERZO, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [DUOLINGO, ALMUERZO, BANO]; // finde
-  if (dow === 2 || dow === 4 || dow === 5) return [DUOLINGO, ALMUERZO, BANO, REPASO, MOCHILA, CLASE]; // mar/jue/vie
-  return [DUOLINGO, ALMUERZO, BANO, REPASO, CLASE]; // lun
+  if (dow === 3) return [DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
+  if (dow === 2 || dow === 4 || dow === 5) return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue/vie
+  return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
