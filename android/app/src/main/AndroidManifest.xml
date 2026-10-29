@@ -37,7 +37,7 @@
     <!-- Poder abrir la app Aseo Speedrun / Ritual de Ducha -->
     <queries>
         <package android:name="com.ritualducha.app" />
-        <package android:name="cc.forestapp" />
+        <package android:name="com.checklist.facu" />
         <package android:name="com.duolingo" />
     </queries>
 </manifest>
