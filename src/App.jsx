@@ -61,11 +61,16 @@ const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, co
 const PSICOLOGA = { key: "psicologa", label: "Psicóloga", Icon: Armchair, color: "#A78BE0" };
 const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA86B" };
 
+// Días de oficina (consistente con RutinaMatinal/Nocturna): solo viernes.
+const OFFICE_DOW = new Set([5]);
+
 const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
+  // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
+  if (OFFICE_DOW.has(dow)) return [DUOLINGO, ALMUERZO, CAFE, CLASE];
   if (dow === 3) return [DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
   if (dow === 0 || dow === 6) return [DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
-  if (dow === 2 || dow === 4 || dow === 5) return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue/vie
+  if (dow === 2 || dow === 4) return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
   return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
 };
 
