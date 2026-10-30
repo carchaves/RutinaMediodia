@@ -6,6 +6,29 @@ import {
 import { AppLauncher } from "@capacitor/app-launcher";
 
 // Al tocar "Baño" se abre la app Aseo Speedrun / Ritual de Ducha.
+// Comida: abrir cámara y compartir la foto al grupo "Comidas" de Telegram.
+const captureMeal = (label) => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "environment";
+  input.style.display = "none";
+  input.onchange = async () => {
+    const file = input.files && input.files[0];
+    if (input.parentNode) input.parentNode.removeChild(input);
+    if (!file) return;
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], text: label });
+        return;
+      }
+    } catch (e) { /* cancelado o no soportado */ }
+    try { await AppLauncher.openUrl({ url: "tg://" }); } catch (e) { /* sin Telegram */ }
+  };
+  document.body.appendChild(input);
+  input.click();
+};
+
 const openApp = async (pkg) => {
   try { await AppLauncher.openUrl({ url: pkg }); } catch (e) { /* no instalada */ }
 };
@@ -28,7 +51,7 @@ const C = {
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
 const DUOLINGO = { key: "duolingo", label: "Duolingo", Icon: Languages, color: "#58CC02", launch: "com.duolingo", launchLabel: "Abrir Duolingo" };
-const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A" };
+const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A", meal: true, mealLabel: "Sacar foto y registrar" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
 const CAFE = { key: "cafe", label: "Café", Icon: Coffee, color: "#8B5E3C" };
 const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F", launch: "com.checklist.facu", launchLabel: "Abrir Checklist" };
@@ -287,11 +310,13 @@ export default function App() {
       {/* hábitos */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8, position: "relative", zIndex: 1 }}>
         {selHabits.map((habit) => {
-          const { key, label, Icon, color, modal, launch, launchLabel } = habit;
+          const { key, label, Icon, color, modal, launch, launchLabel, meal, mealLabel } = habit;
           const done = isDone(selected, habit);
-          const act = () => (modal ? setBagOpen(true) : launch ? openApp(launch) : toggle(key));
+          const act = () => (modal ? setBagOpen(true) : meal ? captureMeal(label) : launch ? openApp(launch) : toggle(key));
           const sub = modal
             ? `${bagItems.filter((it) => data[selected] && data[selected][bagKeyFor(it.id)]).length}/${bagItems.length} ítems`
+            : meal
+            ? mealLabel
             : launch
             ? launchLabel
             : null;
@@ -299,8 +324,8 @@ export default function App() {
             <div
               key={key}
               className="mr-tap mr-row"
-              role={modal || launch ? "button" : "checkbox"}
-              aria-checked={modal || launch ? undefined : done}
+              role={modal || launch || meal ? "button" : "checkbox"}
+              aria-checked={modal || launch || meal ? undefined : done}
               tabIndex={0}
               onClick={act}
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } }}
@@ -318,13 +343,13 @@ export default function App() {
                 {sub && <span style={{ display: "block", color: C.muted, fontSize: 12, fontFamily: "system-ui", marginTop: 1 }}>{sub}</span>}
               </span>
               <span
-                className={launch ? "mr-tap" : undefined}
-                role={launch ? "checkbox" : undefined}
-                aria-checked={launch ? done : undefined}
-                tabIndex={launch ? 0 : undefined}
-                aria-label={launch ? `Marcar ${label} como hecho` : undefined}
-                onClick={launch ? (e) => { e.stopPropagation(); toggle(key); } : undefined}
-                onKeyDown={launch ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); toggle(key); } } : undefined}
+                className={launch || meal ? "mr-tap" : undefined}
+                role={launch || meal ? "checkbox" : undefined}
+                aria-checked={launch || meal ? done : undefined}
+                tabIndex={launch || meal ? 0 : undefined}
+                aria-label={launch || meal ? `Marcar ${label} como hecho` : undefined}
+                onClick={launch || meal ? (e) => { e.stopPropagation(); toggle(key); } : undefined}
+                onKeyDown={launch || meal ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); toggle(key); } } : undefined}
                 style={{
                 width: 24, height: 24, borderRadius: 999,
                 border: `2px solid ${done ? color : C.border}`,
