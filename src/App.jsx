@@ -59,9 +59,11 @@ const OFFICE_DOW = new Set([5]);
 const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
   const office = OFFICE_DOW.has(dow);
-  // Siempre arranca con Trabajo (abre app EY) y después el batido/comida:
-  // días de oficina → Barritas; el resto → Licuado. Ambos abren el chat de Hermes.
-  const prefix = [TRABAJO, office ? BARRITAS : LICUADO];
+  const weekend = dow === 0 || dow === 6;
+  // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, y después el
+  // batido/comida: días de oficina → Barritas; el resto → Licuado. Ambos abren
+  // el chat de Hermes. El finde no tiene Trabajo (solo el Licuado).
+  const prefix = weekend ? [LICUADO] : [TRABAJO, office ? BARRITAS : LICUADO];
   // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
   if (office) return [...prefix, DUOLINGO, ALMUERZO, CAFE, CLASE];
   if (dow === 3) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
