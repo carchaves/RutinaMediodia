@@ -6,27 +6,15 @@ import {
 import { AppLauncher } from "@capacitor/app-launcher";
 
 // Al tocar "Baño" se abre la app Aseo Speedrun / Ritual de Ducha.
-// Comida: abrir cámara y compartir la foto al grupo "Comidas" de Telegram.
-const captureMeal = (label) => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.capture = "environment";
-  input.style.display = "none";
-  input.onchange = async () => {
-    const file = input.files && input.files[0];
-    if (input.parentNode) input.parentNode.removeChild(input);
-    if (!file) return;
-    try {
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], text: label });
-        return;
-      }
-    } catch (e) { /* cancelado o no soportado */ }
-    try { await AppLauncher.openUrl({ url: "tg://" }); } catch (e) { /* sin Telegram */ }
-  };
-  document.body.appendChild(input);
-  input.click();
+// Comida: simplemente abrir Telegram en el chat de Hermes (@HermesHeraldoBot).
+// Charly saca y manda la foto a mano desde ahí. Sin cámara automática, sin token.
+const captureMeal = async () => {
+  try {
+    await AppLauncher.openUrl({ url: "tg://resolve?domain=HermesHeraldoBot" });
+    return;
+  } catch (e) { /* fallback abajo */ }
+  try { await AppLauncher.openUrl({ url: "https://t.me/HermesHeraldoBot" }); }
+  catch (e2) { /* sin Telegram instalado */ }
 };
 
 const openApp = async (pkg) => {
@@ -51,7 +39,7 @@ const C = {
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
 const DUOLINGO = { key: "duolingo", label: "Duolingo", Icon: Languages, color: "#58CC02", launch: "com.duolingo", launchLabel: "Abrir Duolingo" };
-const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A", meal: true, mealLabel: "Sacar foto y registrar" };
+const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A", meal: true, mealLabel: "Abrir chat de Hermes" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
 const CAFE = { key: "cafe", label: "Café", Icon: Coffee, color: "#8B5E3C" };
 const REPASO = { key: "repaso", label: "Repaso", Icon: NotebookPen, color: "#6FA85F", launch: "com.checklist.facu", launchLabel: "Abrir Checklist" };
@@ -317,7 +305,7 @@ export default function App() {
         {selHabits.map((habit) => {
           const { key, label, Icon, color, modal, launch, launchLabel, meal, mealLabel } = habit;
           const done = isDone(selected, habit);
-          const act = () => (modal ? setBagOpen(true) : meal ? captureMeal(label) : launch ? openApp(launch) : toggle(key));
+          const act = () => (modal ? setBagOpen(true) : meal ? captureMeal() : launch ? openApp(launch) : toggle(key));
           const sub = modal
             ? `${bagItems.filter((it) => data[selected] && data[selected][bagKeyFor(it.id)]).length}/${bagItems.length} ítems`
             : meal
