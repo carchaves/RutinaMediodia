@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
   ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X, Languages,
+  Briefcase, GlassWater, Candy,
 } from "lucide-react";
 import { AppLauncher } from "@capacitor/app-launcher";
 
@@ -38,6 +39,9 @@ const C = {
 //   Mar/Jue/Vie: almuerzo, baño, repaso, preparar mochila, clase
 //   Lun: almuerzo, baño, repaso, clase
 //   Sáb/Dom: almuerzo, baño
+const TRABAJO = { key: "trabajo", label: "Trabajo", Icon: Briefcase, color: "#FFC107", launch: "com.raflos.trabajo", launchLabel: "Abrir Trabajo" };
+const LICUADO = { key: "licuado", label: "Licuado", Icon: GlassWater, color: "#6FA85F", meal: true, mealLabel: "Abrir chat de Hermes" };
+const BARRITAS = { key: "barritas", label: "Barritas", Icon: Candy, color: "#C9893C", meal: true, mealLabel: "Abrir chat de Hermes" };
 const DUOLINGO = { key: "duolingo", label: "Duolingo", Icon: Languages, color: "#58CC02", launch: "com.duolingo", launchLabel: "Abrir Duolingo" };
 const ALMUERZO = { key: "almuerzo", label: "Almuerzo", Icon: Utensils, color: "#D98C4A", meal: true, mealLabel: "Abrir chat de Hermes" };
 const BANO = { key: "bano", label: "Baño", Icon: ShowerHead, color: "#4FA3D1", launch: "com.ritualducha.app", launchLabel: "Abrir Aseo Speedrun" };
@@ -54,12 +58,16 @@ const OFFICE_DOW = new Set([5]);
 
 const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
+  const office = OFFICE_DOW.has(dow);
+  // Siempre arranca con Trabajo (abre app EY) y después el batido/comida:
+  // días de oficina → Barritas; el resto → Licuado. Ambos abren el chat de Hermes.
+  const prefix = [TRABAJO, office ? BARRITAS : LICUADO];
   // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
-  if (OFFICE_DOW.has(dow)) return [DUOLINGO, ALMUERZO, CAFE, CLASE];
-  if (dow === 3) return [DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
-  if (dow === 2 || dow === 4) return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
-  return [DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
+  if (office) return [...prefix, DUOLINGO, ALMUERZO, CAFE, CLASE];
+  if (dow === 3) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
+  if (dow === 2 || dow === 4) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
+  return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
