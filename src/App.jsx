@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
   ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X, Languages,
-  Briefcase, GlassWater, Candy,
+  Briefcase, GlassWater, Candy, Dumbbell,
 } from "lucide-react";
 import { AppLauncher } from "@capacitor/app-launcher";
 
@@ -53,6 +53,16 @@ const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, co
 const PSICOLOGA = { key: "psicologa", label: "Psicóloga", Icon: Armchair, color: "#A78BE0" };
 const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA86B" };
 
+// Ejercicio fuerte (movido de la rutina nocturna al mediodía, 2026-11-02),
+// FIJO por día de la semana:
+//   Lun=Calistenia, Mar=Press, Mié=Pierna, Jue=Calistenia, Sáb=Press.
+// Vie y Dom NO tienen ejercicio: descanso total.
+const CAL_MD = { key: "ejercicio", label: "Calistenia", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
+const PRESS = { key: "ejercicio", label: "Press", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
+const PIERNA = { key: "ejercicio", label: "Pierna", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
+const EXERCISE_BY_DOW = { 1: CAL_MD, 2: PRESS, 3: PIERNA, 4: CAL_MD, 6: PRESS };
+const exerciseMD = (d) => EXERCISE_BY_DOW[d.getDay()] || null; // vie/dom: sin ejercicio
+
 // Días de oficina (consistente con RutinaMatinal/Nocturna): solo viernes.
 const OFFICE_DOW = new Set([5]);
 
@@ -60,16 +70,17 @@ const habitsForDate = (d) => {
   const dow = d.getDay(); // 0=Dom .. 6=Sáb
   const office = OFFICE_DOW.has(dow);
   const weekend = dow === 0 || dow === 6;
+  const ex = exerciseMD(d) ? [exerciseMD(d)] : [];
   // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, y después el
   // batido/comida: días de oficina → Barritas; el resto → Licuado. Ambos abren
   // el chat de Hermes. El finde no tiene Trabajo (solo el Licuado).
   const prefix = weekend ? [LICUADO] : [TRABAJO, office ? BARRITAS : LICUADO];
   // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
-  if (office) return [...prefix, DUOLINGO, ALMUERZO, CAFE, CLASE];
-  if (dow === 3) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
-  if (dow === 2 || dow === 4) return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
-  return [...prefix, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
+  if (office) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, CLASE];
+  if (dow === 3) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
+  if (dow === 2 || dow === 4) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
+  return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";

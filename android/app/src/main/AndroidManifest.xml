@@ -40,5 +40,6 @@
         <package android:name="com.checklist.facu" />
         <package android:name="com.duolingo" />
         <package android:name="com.raflos.trabajo" />
+        <package android:name="com.rutina.ejercicio" />
     </queries>
 </manifest>
