@@ -53,15 +53,11 @@ const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, co
 const PSICOLOGA = { key: "psicologa", label: "Psicóloga", Icon: Armchair, color: "#A78BE0" };
 const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA86B" };
 
-// Ejercicio fuerte (movido de la rutina nocturna al mediodía, 2026-11-02),
-// FIJO por día de la semana:
-//   Lun=Calistenia, Mar=Press, Mié=Pierna, Jue=Calistenia, Sáb=Press.
-// Vie y Dom NO tienen ejercicio: descanso total.
+// Ejercicio del mediodía: SOLO Calistenia (2026-11-03). Press y Pierna se movieron
+// a la rutina nocturna. Calistenia va los días que tocaba calistenia: Lun y Jue.
 const CAL_MD = { key: "ejercicio", label: "Calistenia", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
-const PRESS = { key: "ejercicio", label: "Press", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
-const PIERNA = { key: "ejercicio", label: "Pierna", Icon: Dumbbell, color: "#E08A3C", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
-const EXERCISE_BY_DOW = { 1: CAL_MD, 2: PRESS, 3: PIERNA, 4: CAL_MD, 6: PRESS };
-const exerciseMD = (d) => EXERCISE_BY_DOW[d.getDay()] || null; // vie/dom: sin ejercicio
+const EXERCISE_BY_DOW = { 1: CAL_MD, 4: CAL_MD };
+const exerciseMD = (d) => EXERCISE_BY_DOW[d.getDay()] || null; // resto: sin ejercicio al mediodía
 
 // Días de oficina (consistente con RutinaMatinal/Nocturna): solo viernes.
 const OFFICE_DOW = new Set([5]);
