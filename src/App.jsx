@@ -77,18 +77,19 @@ const habitsForDate = (d) => {
   // Estiramiento (venía de la mañana) va JUSTO DESPUÉS de Trabajo. El sábado no
   // hay Trabajo, así que ese día el estiramiento arranca la lista.
   const st = stretchMD(d) ? [stretchMD(d)] : [];
-  // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, después el
-  // estiramiento (si corresponde), y luego el batido/comida: días de oficina →
-  // Barritas; el resto → Licuado. Ambos abren el chat de Hermes. El finde no
-  // tiene Trabajo (solo el Licuado).
-  const prefix = weekend ? [...st, LICUADO] : [TRABAJO, ...st, office ? BARRITAS : LICUADO];
-  // Café va JUSTO DESPUÉS del Almuerzo (2026-11-04).
+  // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, y después el
+  // estiramiento (si corresponde). El batido/Licuado se trackea ahora DENTRO de
+  // la app Trabajo (2026-11-04), así que entre semana ya no va acá. El finde no
+  // hay Trabajo, así que el Licuado sigue en la rutina del mediodía.
+  const prefix = weekend ? [...st, LICUADO] : [TRABAJO, ...st];
+  // Café va JUSTO DESPUÉS del Almuerzo (2026-11-04). Duolingo se movió a la
+  // rutina matutina (2026-11-04).
   // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
-  if (office) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, CLASE];
-  if (dow === 3) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO]; // finde
-  if (dow === 2 || dow === 4) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, REPASO, MOCHILA, CLASE]; // mar/jue
-  return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, REPASO, CLASE]; // lun
+  if (office) return [...prefix, ...ex, ALMUERZO, CAFE, CLASE];
+  if (dow === 3) return [...prefix, ...ex, ALMUERZO, CAFE, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [...prefix, ...ex, ALMUERZO, CAFE, BANO]; // finde
+  if (dow === 2 || dow === 4) return [...prefix, ...ex, ALMUERZO, CAFE, BANO, REPASO, MOCHILA, CLASE]; // mar/jue
+  return [...prefix, ...ex, ALMUERZO, CAFE, BANO, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
