@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   Utensils, ShowerHead, GraduationCap, Coffee, Armchair, BookOpen, NotebookPen,
   ChevronLeft, ChevronRight, Flame, RotateCcw, Backpack, Plus, Trash2, X, Languages,
-  Briefcase, GlassWater, Candy, Dumbbell,
+  Briefcase, GlassWater, Candy, Dumbbell, StretchHorizontal,
 } from "lucide-react";
 import { AppLauncher } from "@capacitor/app-launcher";
 
@@ -59,6 +59,13 @@ const CAL_MD = { key: "ejercicio", label: "Calistenia", Icon: Dumbbell, color: "
 const EXERCISE_BY_DOW = { 1: CAL_MD, 4: CAL_MD };
 const exerciseMD = (d) => EXERCISE_BY_DOW[d.getDay()] || null; // resto: sin ejercicio al mediodía
 
+// Estiramiento movido de la mañana (RutinaMatinal) al mediodía, justo después de
+// Trabajo (2026-11-04). Mismos días que tenía a la mañana: lunes(1), miércoles(3)
+// y sábado(6). Abre la app de ejercicio igual que el estiramiento matinal.
+const EST_MD = { key: "estiramiento", label: "Estiramiento", Icon: StretchHorizontal, color: "#5FBFA3", launch: "com.rutina.ejercicio", launchLabel: "Abrir app de ejercicio" };
+const STRETCH_DOW = new Set([1, 3, 6]);
+const stretchMD = (d) => (STRETCH_DOW.has(d.getDay()) ? EST_MD : null);
+
 // Días de oficina (consistente con RutinaMatinal/Nocturna): solo viernes.
 const OFFICE_DOW = new Set([5]);
 
@@ -67,16 +74,21 @@ const habitsForDate = (d) => {
   const office = OFFICE_DOW.has(dow);
   const weekend = dow === 0 || dow === 6;
   const ex = exerciseMD(d) ? [exerciseMD(d)] : [];
-  // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, y después el
-  // batido/comida: días de oficina → Barritas; el resto → Licuado. Ambos abren
-  // el chat de Hermes. El finde no tiene Trabajo (solo el Licuado).
-  const prefix = weekend ? [LICUADO] : [TRABAJO, office ? BARRITAS : LICUADO];
+  // Estiramiento (venía de la mañana) va JUSTO DESPUÉS de Trabajo. El sábado no
+  // hay Trabajo, así que ese día el estiramiento arranca la lista.
+  const st = stretchMD(d) ? [stretchMD(d)] : [];
+  // Arranca con Trabajo (abre app EY) SOLO de lunes a viernes, después el
+  // estiramiento (si corresponde), y luego el batido/comida: días de oficina →
+  // Barritas; el resto → Licuado. Ambos abren el chat de Hermes. El finde no
+  // tiene Trabajo (solo el Licuado).
+  const prefix = weekend ? [...st, LICUADO] : [TRABAJO, ...st, office ? BARRITAS : LICUADO];
+  // Café va JUSTO DESPUÉS del Almuerzo (2026-11-04).
   // Día de oficina: sin Baño, Repaso ni Preparar mochila (esas no van yendo a la oficina).
   if (office) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, CLASE];
-  if (dow === 3) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
-  if (dow === 0 || dow === 6) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE]; // finde
-  if (dow === 2 || dow === 4) return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, MOCHILA, CLASE]; // mar/jue
-  return [...prefix, ...ex, DUOLINGO, ALMUERZO, BANO, CAFE, REPASO, CLASE]; // lun
+  if (dow === 3) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, PRE_ESTUDIO, PSICOLOGA, ESTUDIO]; // miércoles
+  if (dow === 0 || dow === 6) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO]; // finde
+  if (dow === 2 || dow === 4) return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, REPASO, MOCHILA, CLASE]; // mar/jue
+  return [...prefix, ...ex, DUOLINGO, ALMUERZO, CAFE, BANO, REPASO, CLASE]; // lun
 };
 
 const STORAGE_KEY = "midday_routine_data_v1";
