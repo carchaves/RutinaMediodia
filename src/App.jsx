@@ -51,7 +51,7 @@ const MOCHILA = { key: "mochila", label: "Preparar mochila", Icon: Backpack, col
 const CLASE = { key: "clase", label: "Clase", Icon: GraduationCap, color: "#7E9F3C" };
 const PRE_ESTUDIO = { key: "pre_estudio", label: "Pre-estudio", Icon: Coffee, color: "#C9893C" };
 const PSICOLOGA = { key: "psicologa", label: "Psicóloga", Icon: Armchair, color: "#A78BE0" };
-const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA86B" };
+const ESTUDIO = { key: "estudio", label: "Estudio", Icon: BookOpen, color: "#5FA86B", launch: "cc.forestapp", launchLabel: "Abrir Forest" };
 
 // Ejercicio del mediodía: SOLO Calistenia (2026-11-03). Press y Pierna se movieron
 // a la rutina nocturna. Calistenia va los días que tocaba calistenia: Lun y Jue.
